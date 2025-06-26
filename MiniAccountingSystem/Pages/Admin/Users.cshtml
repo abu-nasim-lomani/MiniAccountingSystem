@@ -23,7 +23,7 @@
                 <td>@user.Roles</td>
                 <td>
                     @* We will create this Manage Roles page later *@
-                    <a class="btn btn-primary btn-sm" href="#">Manage Roles</a>
+                    <a class="btn btn-primary btn-sm" asp-page="ManageRoles" asp-route-userId="@user.UserId">Manage Roles</a>
                 </td>
             </tr>
         }
