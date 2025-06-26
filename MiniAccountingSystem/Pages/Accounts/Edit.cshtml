@@ -1,0 +1,46 @@
+﻿@page "{id:int}"
+@model QtecAccountsWeb.Pages.Accounts.EditModel
+@{
+    ViewData["Title"] = "Edit Account";
+}
+
+<h1>@ViewData["Title"]</h1>
+<h4>@Model.Account.AccountName</h4>
+
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            @* This is a hidden field. The user won't see it, but it's essential.
+               It holds the AccountId so we know which record to update when we save. *@
+            <input type="hidden" asp-for="Account.AccountId" />
+
+            <div class="form-group mb-3">
+                <label asp-for="Account.AccountName" class="control-label"></label>
+                <input asp-for="Account.AccountName" class="form-control" />
+                <span asp-validation-for="Account.AccountName" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="Account.ParentAccountId" class="control-label">Parent Account</label>
+                <select asp-for="Account.ParentAccountId" class="form-control"
+                        asp-items="Model.ParentAccountList">
+                    <option value="">-- No Parent --</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <input type="submit" value="Save Changes" class="btn btn-primary" />
+                <a asp-page="./Index" class="btn btn-secondary">Back to List</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

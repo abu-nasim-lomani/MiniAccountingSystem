@@ -1,0 +1,45 @@
+﻿@page
+@model QtecAccountsWeb.Pages.Accounts.CreateModel
+@{
+    ViewData["Title"] = "Create New Account";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form method="post">
+
+            @* This div shows validation errors, if any. *@
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="form-group mb-3">
+                <label asp-for="Account.AccountName" class="control-label"></label>
+                <input asp-for="Account.AccountName" class="form-control" />
+                <span asp-validation-for="Account.AccountName" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="Account.ParentAccountId" class="control-label">Parent Account</label>
+                @* This creates the dropdown list. *@
+                <select asp-for="Account.ParentAccountId" class="form-control"
+                        asp-items="Model.ParentAccountList">
+                    <option value="">-- No Parent --</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+                <a asp-page="./Index" class="btn btn-secondary">Back to List</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@* This section enables client-side validation *@
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

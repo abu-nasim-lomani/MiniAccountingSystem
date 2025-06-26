@@ -1,0 +1,35 @@
+﻿@page
+@model QtecAccountsWeb.Pages.Accounts.IndexModel
+@{
+    ViewData["Title"] = "Chart of Accounts";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<p>
+    <a class="btn btn-primary" asp-page="Create">Create New Account</a>
+</p>
+
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>Account Name</th>
+            <th>Parent Account</th>
+            <th>Actions</th>
+        </tr>
+    </thead>l
+    <tbody>
+        @* This is a loop. It will go through each account in the Model.Accounts list *@
+        @foreach (var account in Model.Accounts)
+        {
+            <tr>
+                <td>@account.AccountName</td>
+                <td>@account.ParentAccountName</td>
+                <td>
+                    <a asp-page="Edit" asp-route-id="@account.AccountId">Edit</a>|
+                    <a asp-page="Delete" asp-route-id="@account.AccountId" class="text-danger">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

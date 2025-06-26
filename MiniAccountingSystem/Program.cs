@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using MiniAccountingSystem.Data;
+using QtecAccountsWeb.DataAccess.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,6 +15,8 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.Requ
     .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddRazorPages();
 
+
+builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
