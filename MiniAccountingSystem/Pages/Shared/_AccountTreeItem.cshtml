@@ -1,0 +1,28 @@
+﻿@* This is our "artist". It knows how to draw one node (branch) of the tree. *@
+@model MiniAccountingSystem.Models.AccountNodeViewModel
+
+<li>
+    <span>@Model.AccountName</span>
+
+    @* We only show Edit/Delete links if the user is an Admin or Accountant *@
+    @if (User.IsInRole("Admin") || User.IsInRole("Accountant"))
+    {
+        <small class="ms-3">
+            <a asp-page="/Accounts/Edit" asp-route-id="@Model.AccountId">Edit</a> |
+            <a asp-page="/Accounts/Delete" asp-route-id="@Model.AccountId" class="text-danger">Delete</a>
+        </small>
+    }
+
+    @* This is the recursive part. 
+       If this branch has children, we create a new list for them... *@
+    @if (Model.Children.Any())
+    {
+        <ul>
+            @* ...and then we ask the same "artist" (this file) to draw each child. *@
+            @foreach (var child in Model.Children)
+            {
+                <partial name="_AccountTreeItem" model="child" />
+            }
+        </ul>
+    }
+</li>

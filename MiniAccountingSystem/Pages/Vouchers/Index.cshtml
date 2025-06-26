@@ -6,9 +6,12 @@
 
 <h1>@ViewData["Title"]</h1>
 
-<p>
-    <a class="btn btn-primary" asp-page="Create">Create New Voucher</a>
-</p>
+@if (User.IsInRole("Admin") || User.IsInRole("Accountant"))
+{
+    <p>
+        <a class="btn btn-primary" asp-page="Create">Create New Voucher</a>
+    </p>
+}
 
 <table class="table table-bordered table-striped">
     <thead>

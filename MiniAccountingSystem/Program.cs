@@ -1,7 +1,9 @@
+using Humanizer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using MiniAccountingSystem.Data;
 using QtecAccountsWeb.DataAccess.Repositories;
+using System.Diagnostics.Metrics;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,11 +13,32 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-// Enable Role Management for ASP.NET Identity
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
-builder.Services.AddRazorPages();
+
+
+
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("Admin", policy => policy.RequireRole("Admin"));
+    options.AddPolicy("Accountant", policy => policy.RequireRole("Accountant"));
+    options.AddPolicy("Viewer", policy => policy.RequireRole("Viewer"));
+});
+
+
+builder.Services.AddRazorPages(options =>
+{
+    // Now this line will work, because the "Admin" policy has been defined above.
+    options.Conventions.AuthorizeFolder("/Admin", "Admin");
+
+    // Any page in /Accounts requires the user to be at least logged in.
+    options.Conventions.AuthorizeFolder("/Accounts");
+
+    // Any page in /Vouchers requires the user to be at least logged in.
+    options.Conventions.AuthorizeFolder("/Vouchers");
+});
+
 
 // Register our custom repositories for Dependency Injection
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();
@@ -30,8 +53,9 @@ using (var scope = app.Services.CreateScope())
     try
     {
         var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
-        string[] roleNames = { "Admin", "Accountant", "Viewer" };
+        var userManager = services.GetRequiredService<UserManager<IdentityUser>>();
 
+        string[] roleNames = { "Admin", "Accountant", "Viewer" };
         foreach (var roleName in roleNames)
         {
             if (!await roleManager.RoleExistsAsync(roleName))
@@ -39,11 +63,21 @@ using (var scope = app.Services.CreateScope())
                 await roleManager.CreateAsync(new IdentityRole(roleName));
             }
         }
+
+        var adminEmail = "your-admin-email@example.com"; // <-- IMPORTANT: Use your email
+        var adminUser = await userManager.FindByEmailAsync(adminEmail);
+        if (adminUser != null)
+        {
+            if (!await userManager.IsInRoleAsync(adminUser, "Admin"))
+            {
+                await userManager.AddToRoleAsync(adminUser, "Admin");
+            }
+        }
     }
     catch (Exception ex)
     {
         var logger = services.GetRequiredService<ILogger<Program>>();
-        logger.LogError(ex, "An error occurred while seeding the initial roles.");
+        logger.LogError(ex, "An error occurred while seeding the database.");
     }
 }
 
@@ -61,14 +95,9 @@ else
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-
 app.UseRouting();
-
-// Authentication must come before Authorization.
 app.UseAuthentication();
 app.UseAuthorization();
-
-
 app.MapRazorPages();
 
 app.Run();

@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using QtecAccountsWeb.DataAccess.Repositories;
@@ -5,6 +6,7 @@ using QtecAccountsWeb.Models;
 
 namespace QtecAccountsWeb.Pages.Accounts
 {
+    [Authorize(Roles = "Admin,Accountant")]
     public class DeleteModel : PageModel
     {
         private readonly IAccountRepository _accountRepo;
