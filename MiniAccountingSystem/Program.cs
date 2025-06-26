@@ -17,6 +17,7 @@ builder.Services.AddRazorPages();
 
 
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();
+builder.Services.AddScoped<IVoucherRepository, VoucherRepository>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

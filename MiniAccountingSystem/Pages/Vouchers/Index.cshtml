@@ -1,0 +1,38 @@
+﻿@page
+@model QtecAccountsWeb.Pages.Vouchers.IndexModel
+@{
+    ViewData["Title"] = "Voucher List";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<p>
+    <a class="btn btn-primary" asp-page="Create">Create New Voucher</a>
+</p>
+
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>Date</th>
+            <th>Voucher Type</th>
+            <th>Reference No</th>
+            <th>Narration</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @* This loop will display each voucher from the Model.Vouchers list *@
+        @foreach (var voucher in Model.Vouchers)
+        {
+            <tr>
+                <td>@voucher.VoucherDate.ToString("dd-MMM-yyyy")</td>
+                <td>@voucher.VoucherType</td>
+                <td>@voucher.RefNo</td>
+                <td>@voucher.Narration</td>
+                <td>
+                    <a href="#">View Details</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
